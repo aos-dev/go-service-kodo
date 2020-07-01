@@ -1,6 +1,4 @@
 /*
-Package example provided support for local file system.
+Package kodo provided support for qiniu kodo object storage (https://www.qiniu.com/en/products/kodo)
 */
-package example
-
-//go:generate definitions service.hcl
+package kodo
