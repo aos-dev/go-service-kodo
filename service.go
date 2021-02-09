@@ -6,11 +6,11 @@ import (
 
 	qs "github.com/qiniu/api.v7/v7/storage"
 
-	"github.com/aos-dev/go-storage/v2"
-	ps "github.com/aos-dev/go-storage/v2/types/pairs"
+	ps "github.com/aos-dev/go-storage/v3/pairs"
+	typ "github.com/aos-dev/go-storage/v3/types"
 )
 
-func (s *Service) create(ctx context.Context, name string, opt *pairServiceCreate) (store storage.Storager, err error) {
+func (s *Service) create(ctx context.Context, name string, opt *pairServiceCreate) (store typ.Storager, err error) {
 	// Check region ID.
 	_, ok := qs.GetRegionByID(qs.RegionID(opt.Location))
 	if !ok {
@@ -38,7 +38,7 @@ func (s *Service) delete(ctx context.Context, name string, opt *pairServiceDelet
 	return nil
 }
 
-func (s *Service) get(ctx context.Context, name string, opt *pairServiceGet) (store storage.Storager, err error) {
+func (s *Service) get(ctx context.Context, name string, opt *pairServiceGet) (store typ.Storager, err error) {
 	st, err := s.newStorage(ps.WithName(name))
 	if err != nil {
 		return nil, err
@@ -46,14 +46,26 @@ func (s *Service) get(ctx context.Context, name string, opt *pairServiceGet) (st
 	return st, nil
 }
 
-func (s *Service) list(ctx context.Context, opt *pairServiceList) (err error) {
+func (s *Service) list(ctx context.Context, opt *pairServiceList) (it *typ.StoragerIterator, err error) {
+	input := &storagePageStatus{}
+
+	return typ.NewStoragerIterator(ctx, s.nextStoragePage, input), nil
+}
+
+func (s *Service) nextStoragePage(ctx context.Context, page *typ.StoragerPage) error {
 	buckets, err := s.service.Buckets(false)
+	if err != nil {
+		return err
+	}
+
 	for _, v := range buckets {
 		store, err := s.newStorage(ps.WithName(v))
 		if err != nil {
 			return err
 		}
-		opt.StoragerFunc(store)
+
+		page.Data = append(page.Data, store)
 	}
-	return
+
+	return typ.IterateDone
 }
