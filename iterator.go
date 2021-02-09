@@ -2,7 +2,7 @@ package kodo
 
 type objectPageStatus struct {
 	delimiter string
-	maxKeys   int
+	limit     int
 	prefix    string
 	marker    string
 }
@@ -12,8 +12,8 @@ func (i *objectPageStatus) ContinuationToken() string {
 }
 
 type storagePageStatus struct {
-	marker  string
-	maxKeys int
+	marker string
+	limit  int
 }
 
 func (i *storagePageStatus) ContinuationToken() string {

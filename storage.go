@@ -26,8 +26,8 @@ func (s *Storage) delete(ctx context.Context, path string, opt *pairStorageDelet
 
 func (s *Storage) list(ctx context.Context, path string, opt *pairStorageList) (oi *ObjectIterator, err error) {
 	input := &objectPageStatus{
-		maxKeys: 1000,
-		prefix:  s.getAbsPath(path),
+		limit:  1000,
+		prefix: s.getAbsPath(path),
 	}
 
 	var nextFn NextObjectFunc
@@ -60,7 +60,7 @@ func (s *Storage) nextObjectPageByDir(ctx context.Context, page *ObjectPage) err
 		input.prefix,
 		input.delimiter,
 		input.marker,
-		input.maxKeys,
+		input.limit,
 	)
 	if err != nil {
 		return err
@@ -100,7 +100,7 @@ func (s *Storage) nextObjectPageByPrefix(ctx context.Context, page *ObjectPage) 
 		input.prefix,
 		input.delimiter,
 		input.marker,
-		input.maxKeys,
+		input.limit,
 	)
 	if err != nil {
 		return err
