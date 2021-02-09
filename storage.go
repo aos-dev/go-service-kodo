@@ -128,10 +128,23 @@ func (s *Storage) read(ctx context.Context, path string, w io.Writer, opt *pairS
 
 	deadline := time.Now().Add(time.Hour).Unix()
 	url := qs.MakePrivateURL(s.bucket.Mac, s.domain, rp, deadline)
-	resp, err := s.bucket.Client.Get(url)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return 0, err
 	}
+
+	resp, err := s.bucket.Client.Do(ctx, req)
+	if err != nil {
+		return 0, err
+	}
+
+	defer func() {
+		cerr := resp.Body.Close()
+		if cerr != nil {
+			err = cerr
+		}
+	}()
+
 	if resp.StatusCode != http.StatusOK {
 		err = qs.ResponseError(resp)
 		return 0, err
