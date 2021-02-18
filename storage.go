@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	qs "github.com/qiniu/api.v7/v7/storage"
+	qs "github.com/qiniu/go-sdk/v7/storage"
 
 	"github.com/aos-dev/go-storage/v3/pkg/iowrap"
 	. "github.com/aos-dev/go-storage/v3/types"
