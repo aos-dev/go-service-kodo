@@ -3,6 +3,7 @@ package kodo
 import (
 	"errors"
 	"fmt"
+
 	"strconv"
 	"strings"
 	"time"
@@ -13,6 +14,7 @@ import (
 
 	ps "github.com/aos-dev/go-storage/v3/pairs"
 	"github.com/aos-dev/go-storage/v3/pkg/credential"
+	"github.com/aos-dev/go-storage/v3/pkg/endpoint"
 	"github.com/aos-dev/go-storage/v3/pkg/httpclient"
 	"github.com/aos-dev/go-storage/v3/services"
 	typ "github.com/aos-dev/go-storage/v3/types"
@@ -157,9 +159,14 @@ func (s *Service) newStorage(pairs ...typ.Pair) (store *Storage, err error) {
 		return nil, err
 	}
 
+	ep, err := endpoint.Parse(opt.Endpoint)
+	if err != nil {
+		return nil, err
+	}
+
 	store = &Storage{
 		bucket: s.service,
-		domain: opt.Endpoint,
+		domain: ep.String(),
 		putPolicy: qs.PutPolicy{
 			Scope: opt.Name,
 		},

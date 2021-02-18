@@ -9,14 +9,8 @@ optional = ["endpoint", "http_client_options", "pair_policy"]
 [namespace.service.op.create]
 required = ["location"]
 
-[namespace.service.op.delete]
-required = ["location"]
-
-[namespace.service.op.get]
-required = ["location"]
-
 [namespace.storage.new]
-required = ["name", "location", "endpoint"]
+required = ["name", "endpoint"]
 optional = ["work_dir"]
 
 [namespace.storage.op.list]

@@ -133,8 +133,6 @@ type pairServiceDelete struct {
 	pairs []Pair
 
 	// Required pairs
-	HasLocation bool
-	Location    string
 	// Optional pairs
 	// Generated pairs
 }
@@ -148,9 +146,6 @@ func (s *Service) parsePairServiceDelete(opts []Pair) (pairServiceDelete, error)
 	for _, v := range opts {
 		switch v.Key {
 		// Required pairs
-		case "location":
-			result.HasLocation = true
-			result.Location = v.Value.(string)
 		// Optional pairs
 		// Generated pairs
 		default:
@@ -158,9 +153,6 @@ func (s *Service) parsePairServiceDelete(opts []Pair) (pairServiceDelete, error)
 			continue
 
 		}
-	}
-	if !result.HasLocation {
-		return pairServiceDelete{}, services.NewPairRequiredError("location")
 	}
 
 	return result, nil
@@ -171,8 +163,6 @@ type pairServiceGet struct {
 	pairs []Pair
 
 	// Required pairs
-	HasLocation bool
-	Location    string
 	// Optional pairs
 	// Generated pairs
 }
@@ -186,9 +176,6 @@ func (s *Service) parsePairServiceGet(opts []Pair) (pairServiceGet, error) {
 	for _, v := range opts {
 		switch v.Key {
 		// Required pairs
-		case "location":
-			result.HasLocation = true
-			result.Location = v.Value.(string)
 		// Optional pairs
 		// Generated pairs
 		default:
@@ -196,9 +183,6 @@ func (s *Service) parsePairServiceGet(opts []Pair) (pairServiceGet, error) {
 			continue
 
 		}
-	}
-	if !result.HasLocation {
-		return pairServiceGet{}, services.NewPairRequiredError("location")
 	}
 
 	return result, nil
@@ -330,8 +314,6 @@ type pairStorageNew struct {
 	// Required pairs
 	HasEndpoint bool
 	Endpoint    string
-	HasLocation bool
-	Location    string
 	HasName     bool
 	Name        string
 	// Optional pairs
@@ -352,9 +334,6 @@ func parsePairStorageNew(opts []Pair) (pairStorageNew, error) {
 		case "endpoint":
 			result.HasEndpoint = true
 			result.Endpoint = v.Value.(string)
-		case "location":
-			result.HasLocation = true
-			result.Location = v.Value.(string)
 		case "name":
 			result.HasName = true
 			result.Name = v.Value.(string)
@@ -367,9 +346,6 @@ func parsePairStorageNew(opts []Pair) (pairStorageNew, error) {
 	}
 	if !result.HasEndpoint {
 		return pairStorageNew{}, services.NewPairRequiredError("endpoint")
-	}
-	if !result.HasLocation {
-		return pairStorageNew{}, services.NewPairRequiredError("location")
 	}
 	if !result.HasName {
 		return pairStorageNew{}, services.NewPairRequiredError("name")
