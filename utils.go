@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/qiniu/api.v7/v7/auth/qbox"
-	qc "github.com/qiniu/api.v7/v7/client"
-	qs "github.com/qiniu/api.v7/v7/storage"
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	qc "github.com/qiniu/go-sdk/v7/client"
+	qs "github.com/qiniu/go-sdk/v7/storage"
 
 	ps "github.com/aos-dev/go-storage/v3/pairs"
 	"github.com/aos-dev/go-storage/v3/pkg/credential"

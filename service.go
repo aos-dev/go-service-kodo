@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	qs "github.com/qiniu/api.v7/v7/storage"
+	qs "github.com/qiniu/go-sdk/v7/storage"
 
 	ps "github.com/aos-dev/go-storage/v3/pairs"
 	typ "github.com/aos-dev/go-storage/v3/types"
