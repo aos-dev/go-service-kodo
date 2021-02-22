@@ -23,6 +23,8 @@ import (
 // Service is the kodo config.
 type Service struct {
 	service *qs.BucketManager
+
+	defaultPairs DefaultServicePairs
 }
 
 // String implements Service.String
@@ -39,7 +41,8 @@ type Storage struct {
 	name    string
 	workDir string
 
-	pairPolicy typ.PairPolicy
+	defaultPairs DefaultStoragePairs
+	pairPolicy   typ.PairPolicy
 }
 
 // String implements Storager.String
@@ -93,6 +96,10 @@ func newServicer(pairs ...typ.Pair) (srv *Service, err error) {
 	cfg := &qs.Config{}
 	srv.service = qs.NewBucketManager(mac, cfg)
 	srv.service.Client.Client = httpclient.New(opt.HTTPClientOptions)
+
+	if opt.HasDefaultServicePairs {
+		srv.defaultPairs = opt.DefaultServicePairs
+	}
 	return
 }
 
@@ -175,6 +182,12 @@ func (s *Service) newStorage(pairs ...typ.Pair) (store *Storage, err error) {
 		workDir: "/",
 	}
 
+	if opt.HasDefaultStoragePairs {
+		store.defaultPairs = opt.DefaultStoragePairs
+	}
+	if opt.HasPairPolicy {
+		store.pairPolicy = opt.PairPolicy
+	}
 	if opt.HasWorkDir {
 		store.workDir = opt.WorkDir
 	}
