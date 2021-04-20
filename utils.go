@@ -25,6 +25,8 @@ type Service struct {
 	service *qs.BucketManager
 
 	defaultPairs DefaultServicePairs
+
+	typ.UnimplementedServicer
 }
 
 // String implements Service.String
@@ -43,6 +45,8 @@ type Storage struct {
 
 	defaultPairs DefaultStoragePairs
 	pairPolicy   typ.PairPolicy
+
+	typ.UnimplementedStorager
 }
 
 // String implements Storager.String
