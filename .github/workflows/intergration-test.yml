@@ -22,6 +22,7 @@ jobs:
 
       - name: Test
         env:
+          STORAGE_KODO_INTEGRATION_TEST: ${{ secrets.STORAGE_INTEGRATION_TEST }}
           STORAGE_KODO_CREDENTIAL: ${{ secrets.STORAGE_KODO_CREDENTIAL }}
           STORAGE_KODO_NAME: ${{ secrets.STORAGE_KODO_NAME }}
           STORAGE_KODO_ENDPOINT: ${{ secrets.STORAGE_KODO_ENDPOINT }}
