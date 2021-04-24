@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 
-	"strconv"
 	"strings"
 	"time"
 
@@ -252,8 +251,8 @@ func (s *Storage) formatFileObject(v qs.ListItem) (o *typ.Object, err error) {
 		o.SetEtag(v.Hash)
 	}
 
-	sm := make(map[string]string)
-	sm[MetadataStorageClass] = strconv.Itoa(v.Type)
+	var sm ObjectMetadata
+	sm.StorageClass = v.Type
 	o.SetServiceMetadata(sm)
 
 	return
