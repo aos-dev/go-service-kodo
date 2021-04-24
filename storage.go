@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"time"
 
 	qs "github.com/qiniu/go-sdk/v7/storage"
@@ -190,8 +189,8 @@ func (s *Storage) stat(ctx context.Context, path string, opt pairStorageStat) (o
 		o.SetContentType(fi.MimeType)
 	}
 
-	sm := make(map[string]string)
-	sm[MetadataStorageClass] = strconv.Itoa(fi.Type)
+	var sm ObjectMetadata
+	sm.StorageClass = fi.Type
 	o.SetServiceMetadata(sm)
 
 	return o, nil
