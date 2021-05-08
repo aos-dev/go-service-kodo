@@ -25,6 +25,14 @@ func (s *Storage) delete(ctx context.Context, path string, opt pairStorageDelete
 	rp := s.getAbsPath(path)
 
 	err = s.bucket.Delete(s.name, rp)
+	if err != nil && checkError(err, responseCodeResourceNotExist) {
+		// Omit `612`(resource to be deleted dose not exist) error code here
+		//
+		// References
+		// - [AOS-46](https://github.com/aos-dev/specs/blob/master/rfcs/46-idempotent-delete.md)
+		// - https://developer.qiniu.com/kodo/1257/delete
+		err = nil
+	}
 	if err != nil {
 		return err
 	}

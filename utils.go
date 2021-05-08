@@ -162,6 +162,24 @@ func formatError(err error) error {
 	}
 }
 
+// Error code returned by kodo.
+//
+// ref: https://developer.qiniu.com/kodo/api/3928/error-responses
+const (
+	// responseCodeResourceNotExist is an error code that is returned if the specified resource does not exist or has been deleted.
+	responseCodeResourceNotExist = 612
+)
+
+func checkError(err error, code int) bool {
+	if e, ok := err.(*qc.ErrorInfo); ok {
+		if e.Code == code {
+			return true
+		}
+	}
+
+	return false
+}
+
 // newStorage will create a new client.
 func (s *Service) newStorage(pairs ...typ.Pair) (store *Storage, err error) {
 	opt, err := parsePairStorageNew(pairs)
