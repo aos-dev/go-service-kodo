@@ -151,11 +151,11 @@ func formatError(err error) error {
 	}
 
 	// error code returned by kodo looks like http status code, but it's not.
-	// kodo could return 6xx or 7xx for their costumed errors, so we use untyped int directly.
+	// kodo could return 6xx or 7xx for their costumed errors.
 	switch e.Code {
-	case 612:
+	case responseCodeResourceNotExist:
 		return fmt.Errorf("%w: %v", services.ErrObjectNotExist, err)
-	case 403:
+	case responseCodePermissionDenied:
 		return fmt.Errorf("%w: %v", services.ErrPermissionDenied, err)
 	default:
 		return err
@@ -166,18 +166,19 @@ func formatError(err error) error {
 //
 // ref: https://developer.qiniu.com/kodo/api/3928/error-responses
 const (
+	// responseCodeResourceNotExist is an error code that is returned if insufficient permissions and access denied.
+	responseCodePermissionDenied = 403
 	// responseCodeResourceNotExist is an error code that is returned if the specified resource does not exist or has been deleted.
 	responseCodeResourceNotExist = 612
 )
 
 func checkError(err error, code int) bool {
-	if e, ok := err.(*qc.ErrorInfo); ok {
-		if e.Code == code {
-			return true
-		}
+	e, ok := err.(*qc.ErrorInfo)
+	if !ok {
+		return false
 	}
 
-	return false
+	return e.Code == code
 }
 
 // newStorage will create a new client.
