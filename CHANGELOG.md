@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - storage: Implement Create API (#15)
 - *: Add UnimplementedStub (#17)
 - tests: Introduce STORAGE_KODO_INTEGRATION_TEST (#18)
-- storage: Implement AOS-40 (#20)
+- storage: Implement GSP-40 (#20)
 
 ### Changed
 
@@ -29,4 +29,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - Implement kodo services.
 
-[v1.1.0]: https://github.com/aos-dev/go-service-kodo/compare/v1.0.0...v1.1.0
+[v1.1.0]: https://github.com/beyondstorage/go-service-kodo/compare/v1.0.0...v1.1.0

@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 
-	kodo "github.com/aos-dev/go-service-kodo"
-	ps "github.com/aos-dev/go-storage/v3/pairs"
-	"github.com/aos-dev/go-storage/v3/types"
+	kodo "github.com/beyondstorage/go-service-kodo/v2"
+	ps "github.com/beyondstorage/go-storage/v4/pairs"
+	"github.com/beyondstorage/go-storage/v4/types"
 )
 
 func setupTest(t *testing.T) types.Storager {

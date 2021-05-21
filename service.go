@@ -6,8 +6,8 @@ import (
 
 	qs "github.com/qiniu/go-sdk/v7/storage"
 
-	ps "github.com/aos-dev/go-storage/v3/pairs"
-	typ "github.com/aos-dev/go-storage/v3/types"
+	ps "github.com/beyondstorage/go-storage/v4/pairs"
+	typ "github.com/beyondstorage/go-storage/v4/types"
 )
 
 func (s *Service) create(ctx context.Context, name string, opt pairServiceCreate) (store typ.Storager, err error) {
