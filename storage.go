@@ -8,9 +8,9 @@ import (
 
 	qs "github.com/qiniu/go-sdk/v7/storage"
 
-	"github.com/aos-dev/go-storage/v3/pkg/iowrap"
-	"github.com/aos-dev/go-storage/v3/services"
-	. "github.com/aos-dev/go-storage/v3/types"
+	"github.com/beyondstorage/go-storage/v4/pkg/iowrap"
+	"github.com/beyondstorage/go-storage/v4/services"
+	. "github.com/beyondstorage/go-storage/v4/types"
 )
 
 func (s *Storage) create(path string, opt pairStorageCreate) (o *Object) {
@@ -29,7 +29,7 @@ func (s *Storage) delete(ctx context.Context, path string, opt pairStorageDelete
 		// Omit `612`(resource to be deleted dose not exist) error code here
 		//
 		// References
-		// - [AOS-46](https://github.com/aos-dev/specs/blob/master/rfcs/46-idempotent-delete.md)
+		// - [GSP-46](https://github.com/beyondstorage/specs/blob/master/rfcs/46-idempotent-delete.md)
 		// - https://developer.qiniu.com/kodo/1257/delete
 		err = nil
 	}
@@ -60,11 +60,11 @@ func (s *Storage) list(ctx context.Context, path string, opt pairStorageList) (o
 	return NewObjectIterator(ctx, nextFn, input), nil
 }
 
-func (s *Storage) metadata(ctx context.Context, opt pairStorageMetadata) (meta *StorageMeta, err error) {
+func (s *Storage) metadata(opt pairStorageMetadata) (meta *StorageMeta) {
 	meta = NewStorageMeta()
 	meta.Name = s.name
 	meta.WorkDir = s.workDir
-	return meta, nil
+	return meta
 }
 
 func (s *Storage) nextObjectPageByDir(ctx context.Context, page *ObjectPage) error {
