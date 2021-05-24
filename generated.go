@@ -86,6 +86,10 @@ func WithStorageClass(v int) Pair {
 	}
 }
 
+var (
+	_ Servicer = &Service{}
+)
+
 // pairServiceNew is the parsed struct
 type pairServiceNew struct {
 	pairs []Pair
@@ -383,6 +387,10 @@ func (s *Service) ListWithContext(ctx context.Context, pairs ...Pair) (sti *Stor
 
 	return s.list(ctx, opt)
 }
+
+var (
+	_ Storager = &Storage{}
+)
 
 // pairStorageNew is the parsed struct
 type pairStorageNew struct {
