@@ -17,12 +17,10 @@ optional = ["storage_features", "default_storage_pairs", "work_dir"]
 optional = ["list_mode"]
 
 [namespace.storage.op.read]
-optional = ["io_callback"]
-virtual = ["offset", "size"]
+optional = ["offset", "io_callback", "size"]
 
 [namespace.storage.op.write]
-optional = ["io_callback"]
-virtual = ["content_md5", "content_type", "storage_class"]
+optional = ["content_md5", "content_type", "io_callback", "storage_class"]
 
 [pairs.service_features]
 type = "ServiceFeatures"
