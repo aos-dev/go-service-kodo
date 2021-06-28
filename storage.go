@@ -8,21 +8,70 @@ import (
 
 	qs "github.com/qiniu/go-sdk/v7/storage"
 
+	ps "github.com/beyondstorage/go-storage/v4/pairs"
 	"github.com/beyondstorage/go-storage/v4/pkg/iowrap"
 	"github.com/beyondstorage/go-storage/v4/services"
 	. "github.com/beyondstorage/go-storage/v4/types"
 )
 
 func (s *Storage) create(path string, opt pairStorageCreate) (o *Object) {
-	o = s.newObject(false)
-	o.Mode = ModeRead
-	o.ID = s.getAbsPath(path)
+	rp := s.getAbsPath(path)
+
+	if opt.HasObjectMode && opt.ObjectMode.IsDir() {
+		if !s.features.VirtualDir {
+			return
+		}
+		rp += "/"
+		o = s.newObject(true)
+		o.Mode = ModeDir
+	} else {
+		o = s.newObject(false)
+		o.Mode = ModeRead
+	}
+
+	o.ID = rp
 	o.Path = path
 	return o
 }
 
+func (s *Storage) createDir(ctx context.Context, path string, opt pairStorageCreateDir) (o *Object, err error) {
+	if !s.features.VirtualDir {
+		err = NewOperationNotImplementedError("create_dir")
+		return
+	}
+
+	rp := s.getAbsPath(path)
+
+	// Add `/` at the end of path to simulate directory.
+	// ref: https://developer.qiniu.com/kodo/kb/1705/how-to-create-the-folder-under-the-space
+	rp += "/"
+
+	uploader := qs.NewFormUploader(s.bucket.Cfg)
+	ret := qs.PutRet{}
+	err = uploader.Put(ctx,
+		&ret, s.putPolicy.UploadToken(s.bucket.Mac), rp, nil, 0, nil)
+	if err != nil {
+		return
+	}
+
+	o = s.newObject(true)
+	o.Path = path
+	o.ID = rp
+	o.Mode = ModeDir
+	return
+}
+
 func (s *Storage) delete(ctx context.Context, path string, opt pairStorageDelete) (err error) {
 	rp := s.getAbsPath(path)
+
+	if opt.HasObjectMode && opt.ObjectMode.IsDir() {
+		if !s.features.VirtualDir {
+			err = services.PairUnsupportedError{Pair: ps.WithObjectMode(opt.ObjectMode)}
+			return
+		}
+
+		rp += "/"
+	}
 
 	err = s.bucket.Delete(s.name, rp)
 	if err != nil && checkError(err, responseCodeResourceNotExist) {
@@ -177,6 +226,15 @@ func (s *Storage) read(ctx context.Context, path string, w io.Writer, opt pairSt
 func (s *Storage) stat(ctx context.Context, path string, opt pairStorageStat) (o *Object, err error) {
 	rp := s.getAbsPath(path)
 
+	if opt.HasObjectMode && opt.ObjectMode.IsDir() {
+		if !s.features.VirtualDir {
+			err = services.PairUnsupportedError{Pair: ps.WithObjectMode(opt.ObjectMode)}
+			return
+		}
+
+		rp += "/"
+	}
+
 	fi, err := s.bucket.Stat(s.name, rp)
 	if err != nil {
 		return nil, err
@@ -185,7 +243,11 @@ func (s *Storage) stat(ctx context.Context, path string, opt pairStorageStat) (o
 	o = s.newObject(true)
 	o.ID = rp
 	o.Path = path
-	o.Mode |= ModeRead
+	if opt.HasObjectMode && opt.ObjectMode.IsDir() {
+		o.Mode |= ModeDir
+	} else {
+		o.Mode |= ModeRead
+	}
 
 	o.SetLastModified(convertUnixTimestampToTime(fi.PutTime))
 	o.SetContentLength(fi.Fsize)
