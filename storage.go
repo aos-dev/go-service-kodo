@@ -49,7 +49,7 @@ func (s *Storage) createDir(ctx context.Context, path string, opt pairStorageCre
 	uploader := qs.NewFormUploader(s.bucket.Cfg)
 	ret := qs.PutRet{}
 	err = uploader.Put(ctx,
-		&ret, s.putPolicy.UploadToken(s.bucket.Mac), rp, iowrap.SizedReadSeekCloser(nil, 0), 0, nil)
+		&ret, s.putPolicy.UploadToken(s.bucket.Mac), rp, io.LimitReader(nil, 0), 0, nil)
 	if err != nil {
 		return
 	}
