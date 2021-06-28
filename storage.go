@@ -259,9 +259,9 @@ func (s *Storage) stat(ctx context.Context, path string, opt pairStorageStat) (o
 		o.SetContentType(fi.MimeType)
 	}
 
-	var sm ObjectMetadata
+	var sm ObjectSystemMetadata
 	sm.StorageClass = fi.Type
-	o.SetServiceMetadata(sm)
+	o.SetSystemMetadata(sm)
 
 	return o, nil
 }

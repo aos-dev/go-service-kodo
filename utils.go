@@ -270,9 +270,9 @@ func (s *Storage) formatFileObject(v qs.ListItem) (o *typ.Object, err error) {
 		o.SetEtag(v.Hash)
 	}
 
-	var sm ObjectMetadata
+	var sm ObjectSystemMetadata
 	sm.StorageClass = v.Type
-	o.SetServiceMetadata(sm)
+	o.SetSystemMetadata(sm)
 
 	return
 }
