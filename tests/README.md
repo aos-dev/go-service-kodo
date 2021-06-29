@@ -20,7 +20,7 @@ Set following environment variables:
 
 ```shell
 export STORAGE_KODO_INTEGRATION_TEST=on
-export STORAGE_KODO_CREDENTIAL=hamc:access_key:secret_key
+export STORAGE_KODO_CREDENTIAL=hmac:access_key:secret_key
 export STORAGE_KODO_NAME=bucketname
 export STORAGE_KODO_ENDPOINT=endpoint
 ```
