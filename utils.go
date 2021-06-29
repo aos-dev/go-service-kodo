@@ -10,9 +10,9 @@ import (
 	qc "github.com/qiniu/go-sdk/v7/client"
 	qs "github.com/qiniu/go-sdk/v7/storage"
 
+	"github.com/beyondstorage/go-endpoint"
 	ps "github.com/beyondstorage/go-storage/v4/pairs"
 	"github.com/beyondstorage/go-storage/v4/pkg/credential"
-	"github.com/beyondstorage/go-storage/v4/pkg/endpoint"
 	"github.com/beyondstorage/go-storage/v4/pkg/httpclient"
 	"github.com/beyondstorage/go-storage/v4/services"
 	typ "github.com/beyondstorage/go-storage/v4/types"
@@ -46,6 +46,7 @@ type Storage struct {
 	features     StorageFeatures
 
 	typ.UnimplementedStorager
+	typ.UnimplementedDirer
 }
 
 // String implements Storager.String
@@ -192,9 +193,19 @@ func (s *Service) newStorage(pairs ...typ.Pair) (store *Storage, err error) {
 		return nil, err
 	}
 
+	var url string
+	switch ep.Protocol() {
+	case endpoint.ProtocolHTTPS:
+		url, _, _ = ep.HTTPS()
+	case endpoint.ProtocolHTTP:
+		url, _, _ = ep.HTTP()
+	default:
+		return nil, services.PairUnsupportedError{Pair: ps.WithEndpoint(opt.Endpoint)}
+	}
+
 	store = &Storage{
 		bucket: s.service,
-		domain: ep.String(),
+		domain: url,
 		putPolicy: qs.PutPolicy{
 			Scope: opt.Name,
 		},
@@ -269,9 +280,9 @@ func (s *Storage) formatFileObject(v qs.ListItem) (o *typ.Object, err error) {
 		o.SetEtag(v.Hash)
 	}
 
-	var sm ObjectMetadata
+	var sm ObjectSystemMetadata
 	sm.StorageClass = v.Type
-	o.SetServiceMetadata(sm)
+	o.SetSystemMetadata(sm)
 
 	return
 }

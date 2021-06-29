@@ -19,6 +19,9 @@ func setupTest(t *testing.T) types.Storager {
 		ps.WithName(os.Getenv("STORAGE_KODO_NAME")),
 		ps.WithWorkDir("/"+uuid.New().String()+"/"),
 		ps.WithEndpoint(os.Getenv("STORAGE_KODO_ENDPOINT")),
+		kodo.WithStorageFeatures(kodo.StorageFeatures{
+			VirtualDir: true,
+		}),
 	)
 	if err != nil {
 		t.Errorf("new storager: %v", err)
