@@ -7,5 +7,5 @@ require (
 	github.com/beyondstorage/go-integration-test/v4 v4.1.1
 	github.com/beyondstorage/go-storage/v4 v4.3.2
 	github.com/google/uuid v1.2.0
-	github.com/qiniu/go-sdk/v7 v7.9.6
+	github.com/qiniu/go-sdk/v7 v7.9.7
 )
