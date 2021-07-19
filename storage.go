@@ -42,9 +42,23 @@ func (s *Storage) createDir(ctx context.Context, path string, opt pairStorageCre
 
 	rp := s.getAbsPath(path)
 
-	// Add `/` at the end of path to simulate directory.
+	// Add `/` at the end of `path` to simulate a directory.
 	// ref: https://developer.qiniu.com/kodo/kb/1705/how-to-create-the-folder-under-the-space
 	rp += "/"
+
+	// kodo `put` doesn't support `overwrite`, so we need to check and delete the dir if exists.
+	// ref: [GSP-134](https://github.com/beyondstorage/go-storage/blob/master/docs/rfcs/134-write-behavior-consistency.md)
+	_, err = s.bucket.Stat(s.name, rp)
+	if err == nil {
+		err = s.bucket.Delete(s.name, rp)
+	}
+	if err != nil && checkError(err, responseCodeResourceNotExist) {
+		err = nil
+	}
+
+	if err != nil {
+		return
+	}
 
 	uploader := qs.NewFormUploader(s.bucket.Cfg)
 	ret := qs.PutRet{}
@@ -92,6 +106,12 @@ func (s *Storage) list(ctx context.Context, path string, opt pairStorageList) (o
 	input := &objectPageStatus{
 		limit:  1000,
 		prefix: s.getAbsPath(path),
+	}
+
+	if !opt.HasListMode {
+		// Support `ListModePrefix` as the default `ListMode`.
+		// ref: [GSP-654](https://github.com/beyondstorage/go-storage/blob/master/docs/rfcs/654-unify-list-behavior.md)
+		opt.ListMode = ListModePrefix
 	}
 
 	var nextFn NextObjectFunc
@@ -267,11 +287,25 @@ func (s *Storage) stat(ctx context.Context, path string, opt pairStorageStat) (o
 }
 
 func (s *Storage) write(ctx context.Context, path string, r io.Reader, size int64, opt pairStorageWrite) (n int64, err error) {
+	rp := s.getAbsPath(path)
+
+	// kodo `put` doesn't support `overwrite`, so we need to check and delete the object if exists.
+	// ref: [GSP-134](https://github.com/beyondstorage/go-storage/blob/master/docs/rfcs/134-write-behavior-consistency.md)
+	_, err = s.bucket.Stat(s.name, rp)
+	if err == nil {
+		err = s.bucket.Delete(s.name, rp)
+	}
+	if err != nil && checkError(err, responseCodeResourceNotExist) {
+		err = nil
+	}
+
+	if err != nil {
+		return
+	}
+
 	if opt.HasIoCallback {
 		r = iowrap.CallbackReader(r, opt.IoCallback)
 	}
-
-	rp := s.getAbsPath(path)
 
 	uploader := qs.NewFormUploader(s.bucket.Cfg)
 	ret := qs.PutRet{}
